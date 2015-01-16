@@ -1,38 +1,62 @@
-#node-cmd
+#serialport-js
 -
-*Node.js commandline/terminal interface.*  
+*a pure javascript serial port implementation for node.js node-webkit and nw.js*  
 
-Simple commandline or terminal interface to allow you to run cli or bash style commands as if you were in the terminal.
-
-Run commands asynchronously, and if needed can get the output as a string.
+#ALPHA
+####only tested with linux at this time
+####only looking for ttyUSB at this time
 
 #Methods
 -
 
 |method | arguments | functionality |
 |-------|-----------|---------------|
-|run    | command   | runs a command asynchronously|
-|get    | command,callback  | runs a command asynchronously, when the command is complete all of the stdout will be passed to the callback|
+|find   | callback  | finds all available USB serial interfaces |
+|send   | port, msg | sends a message to the specified serial port |
+|listen | port      | open a serial port for bidirectional communication |
 
 
 #Examples
 -
 
-    var cmd=require('node-cmd');
+### find available serial ports
     
-    cmd.get(
-        'pwd',
-        function(data){
-            console.log('the current working dir is : ',data)
+    var serialjs=require('serialport-js');
+
+    serialjs.find(
+        function(ports){
+            console.log('available usb serial : ',ports);
         }
     );
+
+### send a message to a serial port
     
-    cmd.run('touch example.created.file');
-    
-    cmd.get(
-        'ls',
-        function(data){
-            console.log('the current dir contains these files :\n\n',data)
+    var serialjs=require('serialport-js');
+
+    serialjs.send(
+        '/dev/ttyUSB0',
+        'hello'
+    );
+
+### find an open serial port and interact with it.
+
+    var serialjs=require('serialport-js');
+
+    serialjs.find(
+        function(ports){
+            console.log('available usb serial : ',ports);
+            if(ports[0]){
+                var term=serialjs.listen(
+                    ports[0],
+                    function(data){
+                        console.log('data : ',data);
+                    }
+                );
+
+                term.send('hello');
+            }
         }
     );
+
+
 
