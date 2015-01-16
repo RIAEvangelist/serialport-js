@@ -1,0 +1,14 @@
+{
+  "name": "serialport-js",
+  "version": "0.0.1",
+  "description": "- *Node.js commandline/terminal interface.*",
+  "main": "serialport-js.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brandon Nozaki Miller",
+  "license": "DBAD"
+}
