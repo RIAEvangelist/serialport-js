@@ -1,13 +1,13 @@
 {
   "name": "serialport-js",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "- *Node.js commandline/terminal interface.*",
   "main": "serialport-js.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "preinstall": "sudo apt-get install setserial || { echo >&2 \"I require setserial but it's not installed.  Aborting.\"; exit 1; }",
+    "preinstall": "which setserial || sudo apt-get install setserial || { echo >&2 \"I require setserial but it's not installed.  Aborting.\"; exit 1; }",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Brandon Nozaki Miller",
