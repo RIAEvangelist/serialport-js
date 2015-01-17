@@ -1,14 +1,34 @@
 {
   "name": "serialport-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "- *Node.js commandline/terminal interface.*",
   "main": "serialport-js.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
+    "preinstall": "sudo apt-get install setserial || { echo >&2 \"I require setserial but it's not installed.  Aborting.\"; exit 1; }",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Brandon Nozaki Miller",
-  "license": "DBAD"
+  "license": "DBAD",
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIAEvangelist/serialport-js.git"
+  },
+  "keywords": [
+    "serialport",
+    "serial",
+    "port",
+    "pure",
+    "js",
+    "pure",
+    "javascript"
+  ],
+  "bugs": {
+    "url": "https://github.com/RIAEvangelist/serialport-js/issues"
+  },
+  "homepage": "https://github.com/RIAEvangelist/serialport-js"
 }
