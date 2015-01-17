@@ -1,4 +1,4 @@
-var serialjs=require('../../serialport-js');
+var serialjs=require('../../../serialport-js');
 
     serialjs.find(
         function(ports){

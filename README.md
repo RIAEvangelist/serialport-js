@@ -6,6 +6,16 @@
 ####only tested with linux at this time
 ####only looking for ttyUSB at this time
 
+#requirements
+` setserial ` is required at this point to determine the available serial ports on a machine.
+
+if installing into a project dir, as I suggest you do, ` setserial ` will be installed automatically if not present.
+
+if installing with ` npm install -g ` make sure to have ` setserial ` pre installed or it will hang with the current package.
+
+#Installing serialport-js
+` npm install serialport-js `
+
 #Module Methods
 -
 

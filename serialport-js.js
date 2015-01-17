@@ -8,29 +8,44 @@ var serial={
     send:push
 };
 
-function findPorts(callback){
-    CP.exec(
-        'setserial /dev/ttyUSB*', 
-        (
-            function(){
-                return function(err,data,stderr){
-                    if(!callback)
-                        return;
-                    var ports=[];
-                    data=data.split('\n');
-                    for(var i=0; i<data.length;i++){
-                        var port=data[i].split(',');
-                        if(port[0].indexOf('tty')<0)
-                            continue;
-                        
-                        ports.push(port[0]);
-                    }
-                    
-                    callback(ports);
-                }
-            }
-        )(callback)
-    );
+function findPorts(callback,type){
+    if(!callback)
+        return;
+    
+    var ports=[];
+    var search=[
+        '/dev/ttyS',
+        '/dev/ttyUSB'
+    ];
+    
+    if(type)
+        search=[type];
+    
+    var remaining=search.length;
+    
+    function foundPorts(err,data){
+        data=data.split('\n');
+        for(var i=0; i<data.length;i++){
+            if(data[i].indexOf('UART')<0 && data[i].indexOf('undefined')<0)
+                continue;
+            
+            ports.push(
+                data[i].split(',')[0]
+            );
+        }
+        remaining--;
+        if(remaining)
+           return;
+       
+        callback(ports);
+    }
+    
+    for(var i=0; i<search.length; i++){
+        CP.exec(
+            'setserial '+search[i]+'*', 
+            foundPorts
+        );
+    }
 }
 
 function push(port,data){
