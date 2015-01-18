@@ -1,7 +1,9 @@
-var serialjs=require('../../serialport-js'),
+var serialjs=require('../../serialport-js').node(),
     list=false,
     terminal=false,
     openPort=false;
+
+console.log(serialjs);
 
 var gui = require('nw.gui');
 gui.App.setCrashDumpDir('/home/bmiller/git/serialport-js/examples/nwjs-node-webkit/');
@@ -59,7 +61,7 @@ function gotData(data){
     console.log(data);
     var li=document.createElement('li');
     li.innerHTML=data;
-    terminal.appenChild(li);
+    terminal.appendChild(li);
 }
 
 function setPort(e){

@@ -29,6 +29,9 @@ process.stdin.on(
             case 'connect' :
                 setPort(data.data.port,data.data.delimiter);
                 break;
+            case 'data' :
+                openPorts[data.data.port].send(data.data.data);
+                break;
             case 'close' :
                 if(!openPorts[data.data])
                     return;

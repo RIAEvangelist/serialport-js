@@ -176,8 +176,7 @@ function nwjs(){
     serial.ports=[];
     
     var callbacks={
-        find:[],
-        open:[]
+        find:[]
     }
     
     var openPorts={};
@@ -202,10 +201,11 @@ function nwjs(){
     }
     
     function open(path,callback,delimiter){
-        callbacks.open.push(callback);
+        if(!callback)
+            return;
         
         var portRefrence=openPorts[path]=new events.EventEmitter();
-        portRefrence.serialPort=portPath;
+        portRefrence.serialPort=path;
         portRefrence.send=sendData;
         portRefrence.close=function(){
             child.stdin.write(
@@ -233,6 +233,22 @@ function nwjs(){
                 }
             )
         );
+    
+        function sendData(data){
+            child.stdin.write(
+                JSON.stringify(
+                    {
+                        type: 'data',
+                        data: {
+                            port:path,
+                            data:data
+                        }
+                    }
+                )
+            );
+        }
+        
+        callback(portRefrence);
     }
 
     child.stdout.on(
@@ -282,6 +298,8 @@ function nwjs(){
             console.log(data.asciiSlice());
         }
     );
+
+    return serial;
 }
 
 module.exports=serial;
