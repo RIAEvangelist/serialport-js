@@ -12,7 +12,7 @@ function findPorts(callback,type){
     if(!callback)
         return;
     
-    
+    console.log('to come soon, not yet implemented.')
 }
 
 function open(path,callback,delimiter){

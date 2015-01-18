@@ -7,11 +7,7 @@
 ####only looking for ttyUSB at this time
 
 #requirements
-` setserial ` is required at this point to determine the available serial ports on a machine.
-
-if installing into a project dir, as I suggest you do, ` setserial ` will be installed automatically if not present.
-
-if installing with ` npm install -g ` make sure to have ` setserial ` pre installed or it will hang with the current package.
+none currently
 
 #Installing serialport-js
 ` npm install serialport-js `
@@ -21,8 +17,7 @@ if installing with ` npm install -g ` make sure to have ` setserial ` pre instal
 
 |method | arguments            | result                           | description |
 |-------|----------------------|----------------------------------|-------------|
-|find   | callback, port type  | array of ports passed to callback| if no port type specified returns  |
-|send   | port, data           |                                  | sends data to the specified serial port |
+|find   | callback, port type  | array of ports passed to callback| *coming soon if no port type specified returns  |
 |open   | port, delimiter      | returns reference to port        | open a serial port for bidirectional communication. The returned refrence will have the port info and a send function available on it. Data events will be dispatched on the returned port reference when the delimiter is received |
 
 #Port Events
@@ -46,8 +41,32 @@ if installing with ` npm install -g ` make sure to have ` setserial ` pre instal
 #Examples
 -
 
+### basic example 
+
+    var serialjs=require('serialport-js');
+    serialjs.open(
+        '/dev/ttyUSB0',
+        start,
+        '\n'
+    );
+
+    function start(port){
+        port.on(
+            'data',
+            gotData
+        );
+
+        port.send('howdy doody doo!')
+    }
+
+    function gotData(data){
+        console.log(data);
+    }   
+
+
 ### find any available serial ports
-    
+*coming soon rolled back 
+
     var serialjs=require('serialport-js');
 
     serialjs.find(
@@ -57,6 +76,7 @@ if installing with ` npm install -g ` make sure to have ` setserial ` pre instal
     );
 
 ### find an available serial USB port
+*coming soon rolled back 
     
     var serialjs=require('serialport-js');
 
@@ -68,6 +88,7 @@ if installing with ` npm install -g ` make sure to have ` setserial ` pre instal
     );
 
 ### find a specific serial USB port
+*coming soon rolled back 
     
     var serialjs=require('serialport-js');
 
@@ -78,16 +99,8 @@ if installing with ` npm install -g ` make sure to have ` setserial ` pre instal
         '/dev/ttyUSB0'
     );
 
-### send a message to a specific serial USB port without opening it for bi-directional communication.
-    
-    var serialjs=require('serialport-js');
-
-    serialjs.send(
-        '/dev/ttyUSB0',
-        'hello'
-    );
-
 ### find, then open serial port and communicate with it bi-directionally.
+*find coming soon rolled back 
 
     var serialjs=require('serialport-js');
 
