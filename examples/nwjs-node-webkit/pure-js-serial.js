@@ -67,6 +67,8 @@ function start(port){
     );
 
     openPort=port;
+    
+    sendStuff('Port opened!');
 }
 
 function gotData(data){
@@ -74,7 +76,14 @@ function gotData(data){
     var li=document.createElement('li');
     li.innerHTML=data;
     terminal.appendChild(li);
-    openPort.send('howdy doody doo');
+    sendStuff('howdy doody doo');
+}
+
+function sendStuff(data){
+    openPort.send(data);
+    var li=document.createElement('li');
+    li.innerHTML=data;
+    terminal.appendChild(li);
 }
 
 function setPort(e){
