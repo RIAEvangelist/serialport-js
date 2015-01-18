@@ -1,73 +1,43 @@
-var sys     = require('sys'),
-    CP      = require('child_process'),
+var fs      = require('fs'),
+    sys     = require('sys'),
+    tty     = require('tty'),
     events  = require('events');
 
 var serial={
     find:findPorts,
-    open:term,
-    send:push
+    open:open
 };
 
 function findPorts(callback,type){
     if(!callback)
         return;
     
-    var ports=[];
-    var search=[
-        '/dev/ttyS',
-        '/dev/ttyUSB'
-    ];
     
-    if(type)
-        search=[type];
-    
-    var remaining=search.length;
-    
-    function foundPorts(err,data){
-        data=data.split('\n');
-        for(var i=0; i<data.length;i++){
-            if(data[i].indexOf('UART')<0 && data[i].indexOf('undefined')<0)
-                continue;
-            
-            ports.push(
-                data[i].split(',')[0]
+}
+
+function open(path,callback,delimiter){
+    (
+        function(path,callback,delimiter){
+            fs.open(
+                path,
+                'r+',
+                function(err,fd){
+                    term(path,delimiter,callback,fd);
+                }
             );
         }
-        remaining--;
-        if(remaining)
-           return;
-       
-        callback(ports);
-    }
-    
-    for(var i=0; i<search.length; i++){
-        CP.exec(
-            'setserial '+search[i]+'*', 
-            foundPorts
-        );
-    }
+    )(path,callback,delimiter);
 }
 
-function push(port,data){
-    CP.exec(
-        'echo "'+data.replace(/\"/g,'\"')+'" > '+port
-    )
-}
-
-function term(port,delimiter){
+function term(port,delimiter,callback,fd){
     var out='',
         portRefrence=new events.EventEmitter(),
-        child=CP.spawn(
-            'cat', 
-            [port],
-            {
-                stdio:['pipe','pipe','pipe']
-            }
-        );
+        port=new tty.ReadStream(fd);
     
-    child.serialPort=port;
-    
-    child.stdout.on(
+    port.setRawMode(true);;
+    port.serialPort=port;
+    console.log(port)
+    port.on(
         'data', 
         function (data) {
             out+=data.asciiSlice();
@@ -83,7 +53,7 @@ function term(port,delimiter){
         }
     );
 
-    child.stderr.on(
+    port.on(
         'data', 
         function (data) {
             portRefrence.emit(
@@ -93,24 +63,24 @@ function term(port,delimiter){
         }
     );
 
-    child.on(
+    port.on(
         'close', 
         function (code) {
-            console.log('child process exited with code ' + code);
+            console.log('port closed ' + code);
         }  
     );
     
     function sendData(data){
-        push(child.serialPort,data);
+        port.write(data+delimiter);
     }
     
-    portRefrence.port=child.serialPort;
+    portRefrence.port=port.serialPort;
     portRefrence.send=sendData;
     portRefrence.close=function(){
-        child.close();
+        
     };
     
-    return portRefrence;
+    callback(portRefrence);
 }
 
 module.exports=serial;
