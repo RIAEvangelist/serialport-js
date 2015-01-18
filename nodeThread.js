@@ -21,6 +21,7 @@ process.stdin.on(
                     }
                 )
             );
+            return;
         }
         switch(data.type){
             case 'find' :
@@ -30,6 +31,9 @@ process.stdin.on(
                 setPort(data.data.port,data.data.delimiter);
                 break;
             case 'data' :
+                if(!openPorts[data.data.port])
+                    return;
+                
                 openPorts[data.data.port].send(data.data.data);
                 break;
             case 'close' :

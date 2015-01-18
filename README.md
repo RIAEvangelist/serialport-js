@@ -17,7 +17,7 @@ none currently
 
 |method | arguments            | result                           | description |
 |-------|----------------------|----------------------------------|-------------|
-|find   | callback, port type  | array of ports passed to callback| *coming soon if no port type specified returns  |
+|find   | callback             | array of ports passed to callback| returns array od ports and info  |
 |open   | port, delimiter      | returns reference to port        | open a serial port for bidirectional communication. The returned refrence will have the port info and a send function available on it. Data events will be dispatched on the returned port reference when the delimiter is received |
 
 #Port Events
@@ -26,7 +26,7 @@ none currently
 |method | arguments            | description                      |
 |-------|----------------------|----------------------------------|
 |data   | data                 | array of ports passed to callback|
-|err    | errType, message     | an error happened on the port    |
+|error  | errType, data        | an error happened on the port    |
 |close  |                      | the port has been closed         |
 
 #Port Methods
@@ -65,7 +65,7 @@ none currently
 
 
 ### find any available serial ports
-*coming soon rolled back 
+
 
     var serialjs=require('serialport-js');
 
@@ -73,54 +73,68 @@ none currently
         function(ports){
             console.log('available usb serial : ',ports);
         }
-    );
-
-### find an available serial USB port
-*coming soon rolled back 
-    
-    var serialjs=require('serialport-js');
-
-    serialjs.find(
-        function(ports){
-            console.log('available usb serial : ',ports);
-        },
-        '/dev/ttyUSB'
-    );
-
-### find a specific serial USB port
-*coming soon rolled back 
-    
-    var serialjs=require('serialport-js');
-
-    serialjs.find(
-        function(ports){
-            console.log('available usb serial : ',ports);
-        },
-        '/dev/ttyUSB0'
     );
 
 ### find, then open serial port and communicate with it bi-directionally.
-*find coming soon rolled back 
 
     var serialjs=require('serialport-js');
+    serialjs.find(serialDevicesPopulated);
 
-    serialjs.find(
-        function(ports){
-            console.log('available usb serial : ',ports);
-            if(ports[0]){
-                var term=serialjs.open(ports[0],'\n');
-                
-                term.on(
-                    'data',
-                    function(data){
-                        console.log(data);
-                    }
-                );
+    function serialDevicesPopulated(ports){
+        //ports arg is a refrence to serialjs.ports
+        console.log(
+            ports
+        );
 
-                term.send('hello');
-            }
-        }
-    );
+        if(!ports[0])
+            return;
 
+        serialjs.open(ports[0].port,start,'\n');
+    }
 
+    function start(port){
+        port.on(
+            'data',
+            gotData
+        );
 
+        port.send('howdy doody doo');
+    }
+
+    function gotData(data){
+        console.log(data);
+    }
+
+#node-webkit, nw.js, and seperate node.js thread examples
+*The only difference with this is that the user must have node installed. It will spawn a node proxy using their local node version and run the pure js serialport implementation. This is great for consumer facing products as there is no need for compilers or dev tools to install the module with your app, users just need node.
+
+    var serialjs=require('serialport-js').node(); //thats the only difference
+    //the rest of the implementation is exactly the same.
+
+    serialjs.find(serialDevicesPopulated);
+
+    function serialDevicesPopulated(ports){
+        //ports arg is a refrence to serialjs.ports
+        console.log(
+            ports
+        );
+
+        if(!ports[0])
+            return;
+
+        serialjs.open(ports[0].port,start,'\n');
+    }
+
+    function start(port){
+        port.on(
+            'data',
+            gotData
+        );
+        
+        //if this doesn't show up the port may need a few milliseconds to open
+        port.send('howdy doody doo');
+    }
+
+    function gotData(data){
+        console.log(data);
+    }

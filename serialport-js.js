@@ -214,6 +214,18 @@ function nwjs(){
         if(!callback)
             return;
         
+        child.stdin.write(
+            JSON.stringify(
+                {
+                    type: 'connect',
+                    data: {
+                        port:path,
+                        delimiter:delimiter
+                    }
+                }
+            )
+        );
+        
         var portRefrence=openPorts[path]=new events.EventEmitter();
         portRefrence.serialPort=path;
         portRefrence.send=sendData;
@@ -232,18 +244,6 @@ function nwjs(){
         
         openPorts[path]=portRefrence;
         
-        child.stdin.write(
-            JSON.stringify(
-                {
-                    type: 'connect',
-                    data: {
-                        port:path,
-                        delimiter:delimiter
-                    }
-                }
-            )
-        );
-    
         function sendData(data){
             child.stdin.write(
                 JSON.stringify(
@@ -258,7 +258,13 @@ function nwjs(){
             );
         }
         
-        callback(portRefrence);
+        //allow connection to happen
+        setTimeout(
+            function(){
+                callback(portRefrence);
+            },
+            2
+        );
     }
 
     child.stdout.on(
