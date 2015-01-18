@@ -1,0 +1,7 @@
+{
+    "name": "nwjs-pure-javascript-serialport",
+    "main": "index.html",
+    "window":{
+        "toolbar":true
+    }
+}
