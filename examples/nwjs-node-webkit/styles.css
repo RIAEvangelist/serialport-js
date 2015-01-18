@@ -1,13 +1,70 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
 /* 
     Created on : Jan 18, 2015, 12:26:37 AM
     Author     : bmiller
 */
 
+html,
+body{
+    margin:0;
+    height:100%;
+    overflow:hidden;
+}
+
+body *{
+    position:relative;
+}
+
+.portList{
+    position:absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:25%;
+    list-style: none;
+    overflow-y: auto;
+    padding:0;
+    margin:0;
+}
+
+.portList li{
+    border-bottom:1px solid rgb(200,200,200);
+}
+
 .activePort{
     background:rgb(220,220,250);
+}
+
+.terminal{
+    position:absolute;
+    top:0;
+    left:25%;
+    height:calc(100% - 32px);;
+    width:calc(75% - 2px);;
+    list-style: none;
+    overflow-y: auto;
+    border:1px solid rgb(200,200,200);
+    padding:0;
+    margin:0;
+}
+
+input{
+    position:absolute;
+    bottom:0;
+    left:25%;
+    border:none;
+    box-shadow:inset 0 0 3px 1px rgba(0,0,0,.2);
+    height:30px;
+    line-height:30px;
+    font-size:20px;
+    width:50%;
+}
+
+button{
+    width:25%;
+    position:absolute;
+    bottom:0;
+    right:0;
+    height:30px;
+    margin:0;
+    cursor:pointer;
 }

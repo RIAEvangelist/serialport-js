@@ -22,14 +22,24 @@ function findPorts(callback){
         paths.linux.serial, 
         function (err, files) {
             if (err) {
-                //handle error
+                serial.ports=[];
+                if(callback)
+                    callback(serial.ports);
+                
+                console.log(err);
+             
                 return;
             }
             
             var fileCount=files.length;
             
             serial.ports=[];
-            
+            if(files.length<1){
+                if(callback)
+                    callback(serial.ports);
+                
+                return;
+            }
             for(var i=0; i<files.length; i++){
                 fileName=path.join(
                     paths.linux.serial, 

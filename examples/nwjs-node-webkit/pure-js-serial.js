@@ -1,21 +1,22 @@
 var serialjs=require('../../serialport-js').node(),
     list=false,
     terminal=false,
-    openPort=false;
+    openPort=false,
+    input=false,
+    button=false;
 
 console.log(serialjs);
 
 var gui = require('nw.gui');
 gui.App.setCrashDumpDir('/home/bmiller/git/serialport-js/examples/nwjs-node-webkit/');
 
-/*
+
 setInterval(
     function(){
         serialjs.find(updatePorts);
     },
-    8000
+    2000 //this low just to show plug and unplug
 );
-*/
 
 window.addEventListener(
     'DOMContentLoaded',
@@ -25,8 +26,9 @@ window.addEventListener(
 function initUI(){
     list=document.getElementById('portList');
     terminal=document.getElementById('terminal');
+    button=document.querySelector('button');
+    input=document.querySelector('input');
     serialjs.find(updatePorts);
-    
     list.addEventListener(
         'click',
         setPort
@@ -34,10 +36,20 @@ function initUI(){
 }
 
 function updatePorts(ports){
-    var list=document.getElementById('portList');
-    list.innerHTML='';
+    var portEls=list.querySelectorAll('li');
+    var portData=JSON.stringify(ports);
+    console.log(portData)
+    
+    for(var i=0; i<portEls.length; i++){
+        var port=portEls[i].getAttribute('port');
+        if(portData.indexOf(port)<0)
+            list.removeChild(portEls[i]);
+    }
     
     for(var i=0; i<ports.length; i++){
+        if(list.querySelector('li[port="'+ports[i].port+'"]'))
+            continue;
+        
         var li=document.createElement('li');
         li.setAttribute('port',ports[i].port);
         li.innerHTML=ports[i].port+'<br>'+ports[i].info;
@@ -62,6 +74,7 @@ function gotData(data){
     var li=document.createElement('li');
     li.innerHTML=data;
     terminal.appendChild(li);
+    openPort.send('howdy doody doo');
 }
 
 function setPort(e){
