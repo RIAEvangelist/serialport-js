@@ -1,10 +1,10 @@
 #serialport-js
 -
-*a pure javascript serial port implementation for node.js node-webkit and nw.js*  
+*a pure javascript serial port implementation for node.js, node-webkit and nw.js*  
 
 #ALPHA
-####only tested with linux at this time
-####only looking for ttyUSB at this time
+####only tested on linux at this time
+
 
 #requirements
 none currently
