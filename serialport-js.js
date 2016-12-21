@@ -1,6 +1,6 @@
 var fs      = require('fs'),
     cp      = require('child_process'),
-    sys     = require('sys'),
+    sys     = require('util'),
     tty     = require('tty'),
     path    = require('path'),
     events  = require('events');
