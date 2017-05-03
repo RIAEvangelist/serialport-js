@@ -3,16 +3,32 @@
   "version": "0.2.2",
   "description": "- *Node.js commandline/terminal interface.*",
   "main": "serialport-js.js",
-  "directories": {
-    "example": "examples"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "gulp eslint",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-cov": "nyc node_modules/mocha/bin/_mocha -- {lib,test}/**/*.spec.js"
   },
-  "author": "Brandon Nozaki Miller",
+  "files": [
+    "examples/",
+    "lib/",
+    "LICENSE"
+  ],
+  "author": [
+    "Brandon Nozaki Miller",
+    "Thomas Reynders"
+  ],
   "license": "DBAD",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-mocha": "^4.3.1",
+    "gulp-watch": "^4.3.11",
+    "mocha": "^3.3.0",
+    "nyc": "^10.3.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/RIAEvangelist/serialport-js.git"
