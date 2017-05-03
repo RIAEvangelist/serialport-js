@@ -10,7 +10,7 @@ const gulp = require('gulp'),
 
 // ESLint JS linting task
 gulp.task('eslint', function () {
-  let assets = './lib/**.js';
+  const assets = './lib/**.js';
 
   return gulp.src(assets)
     .pipe(plugins.eslint())
@@ -19,6 +19,7 @@ gulp.task('eslint', function () {
 
 // Mocha tests task
 gulp.task('mocha', function (done) {
+  const testSuites = './test/**.spec.js';
   let error;
 
   // Run the tests
@@ -34,9 +35,4 @@ gulp.task('mocha', function (done) {
     .on('end', function () {
         done(error);
     });
-});
-
-// Run the project tests
-gulp.task('test', function (done) {
-  runSequence('mocha', done);
 });
