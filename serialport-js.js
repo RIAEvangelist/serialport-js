@@ -1,202 +1,138 @@
-var fs      = require('fs'),
-    cp      = require('child_process'),
-    sys     = require('util'),
-    tty     = require('tty'),
-    path    = require('path'),
-    events  = require('events');
+const fs = require('fs'),
+  cp = require('child_process'),
+  sys = require('util'),
+  tty = require('tty'),
+  path = require('path'),
+  events = require('events');
 
-var serial=new events.EventEmitter();
-serial.find=findPorts;
-serial.open=open;
-serial.ports=[];
-serial.node=nwjs;
+let serial = new events.EventEmitter();
 
-var paths={
-    linux:{
+
+const paths = {
+    linux: {
         serial:'/dev/serial/by-id'
     }
 };
 
-function findPorts(callback){
-    fs.readdir(
-        paths.linux.serial, 
-        function (err, files) {
-            if (err) {
-                serial.ports=[];
-                if(callback)
-                    callback(serial.ports);
-                
-                console.log(err);
-             
-                return;
-            }
-            
-            var fileCount=files.length;
-            
-            serial.ports=[];
-            if(files.length<1){
-                if(callback)
-                    callback(serial.ports);
-                
-                return;
-            }
-            for(var i=0; i<files.length; i++){
-                fileName=path.join(
-                    paths.linux.serial, 
-                    files[i]
-                );
-                
-                (
-                    function(portID,fileCount,callback){
-                        fs.readlink(
-                            fileName, 
-                            function (err, link) {
-                                if (err) {
-                                    //handle error
-                                    return;
-                                }
+const findPorts = () => (
 
-                                var link = path.resolve(
-                                    paths.linux.serial, 
-                                    link
-                                );
-                            
-                                serial.ports.push(
-                                    {
-                                        info:portID.replace(/\_/g,' '),
-                                        port:link
-                                    }
-                                );
-                                
-                                fileCount--;
-                                
-                                if(fileCount)
-                                    return;
-                                
-                                if(callback)
-                                    callback(serial.ports);
-                            }
-                        );
-                    }
-                )(files[i],fileCount,callback);
-            
-            }
-        }
-    );
-}
-
-function open(path,callback,delimiter){
-    if(!callback)
+  new Promise((resolve, reject) => {
+    try {
+      const files = fs.readdirSync(paths.linux.serial);
+      const size = files.length;
+      
+      if (!size) {
+        resolve([]);
         return;
-    
-    (
-        function(path,callback,delimiter){
-            fs.open(
-                path,
-                'r+',
-                function(err,fd){
-                    term(path,delimiter,callback,fd);
-                }
-            );
+      }
+
+      for (let i = 0; i < size; i++) {
+        try {
+          const file = files[i];
+          const filePath = path.join(paths.linux.serial, files[i]);
+          const link = fs.readlinkSync(filePath);
+
+          serial.ports.push({
+            'info': file.replace(/\_/g,' '),
+            'port': path.resolve(paths.linux.serial, link)
+          });
+
+        } catch (error) {
+          reject(error);
         }
-    )(path,callback,delimiter);
-}
+      }
 
-function term(portPath,delimiter,callback,fd){
-    var out='',
-        portRefrence=new events.EventEmitter(),
-        port=new tty.ReadStream(fd);
-    
-    //port.setRawMode(true);;
-    port.on(
-        'data', 
-        function (data) {
-            out+=data.asciiSlice();
-            if(delimiter){
-                if(out.indexOf(delimiter)<0)
-                    return;
-                
-                out=out.replace(delimiter,'');
-            }
-            
-            portRefrence.emit(
-                'data',
-                out
-            );
-        
-            out='';
-        }
-    );
-
-    port.on(
-        'error', 
-        function (data) {
-            portRefrence.emit(
-                'error',
-                data
-            );
-        }
-    );
-
-    port.on(
-        'close', 
-        closed  
-    );
-
-    port.on(
-        'end', 
-        closed  
-    );
-
-    port.on(
-        'exit', 
-        closed  
-    );
-
-    function closed(data){
-        try{
-            portRefrence.emit(
-                'closed',
-                data
-            );
-        }catch(err){
-            //already removed from memory
-        }
+      resolve(serial.ports);
+    } catch (error) {
+      reject(error);
     }
+  })
+);
+
+const open = (path, callback, delimiter) => {
+  if(!callback){
+    return;
+  }
+  
+  (function(path,callback,delimiter){
+    fs.open(path, 'r+', function(err, fd){
+      term(path, delimiter, callback, fd);
+    });
+  })(path, callback, delimiter);
+};
+
+function term (portPath, delimiter, callback, fd){
+    var out = '',
+        portRefrence = new events.EventEmitter(),
+        port = new tty.ReadStream(fd);
     
-    function sendData(data){
-        port.write(data+delimiter);
-    }
+    //port.setRawMode(true);
+    port.on('data', function (data) {
+      out += data.asciiSlice();
+      if (delimiter) {
+        if (out.indexOf(delimiter) < 0) {
+          return;
+        }
+
+        out = out.replace(delimiter, '');
+      }
+      
+      portRefrence.emit('data', out);
+  
+      out = '';
+    });
+
+    const closed = data => {
+      try {
+        portRefrence.emit('closed', data);
+      } catch(err) {
+        //already removed from memory
+      }
+    };
+
+    port.on('error', function (data) {
+      portRefrence.emit('error', data);
+    });
+
+    port.on('close', closed);
+
+    port.on('end', closed);
+
+    port.on('exit', closed);
     
-    portRefrence.serialPort=portPath;
-    portRefrence.send=sendData;
-    portRefrence.close=function(){
+    const sendData = data => {
+      port.write(data + delimiter);
+    };
+    
+    portRefrence.serialPort = portPath;
+    portRefrence.send = sendData;
+    portRefrence.close = function() {
         port.end();
-        port=null;
-        portRefrence=null;
+        port = null;
+        portRefrence = null;
     };
     
     callback(portRefrence);
 }
 
-function nwjs(){
-    var serial=new events.EventEmitter();
-    serial.find=findPorts;
-    serial.open=open;
-    serial.ports=[];
+function nwjs() {
+    let serial = new events.EventEmitter();
+    serial.find = findPorts;
+    serial.open = open;
+    serial.ports = [];
     
-    var callbacks={
-        find:[]
+    let callbacks={
+      find:[]
     }
     
-    var openPorts={};
+    let openPorts={};
     
-    var child=cp.spawn(
-        'node', 
-        [__dirname + '/nodeThread.js'],
-        {
-            stdio:['pipe','pipe','pipe']
-        }
+    let child = cp.spawn(
+      'node', 
+      [__dirname + '/nodeThread.js'],
+      {
+          stdio: ['pipe', 'pipe', 'pipe']
+      }
     );
     
     function findPorts(callback){
@@ -318,4 +254,9 @@ function nwjs(){
     return serial;
 }
 
-module.exports=serial;
+serial.find = findPorts;
+serial.open = open;
+serial.ports = [];
+serial.node = nwjs;
+
+module.exports = serial;
