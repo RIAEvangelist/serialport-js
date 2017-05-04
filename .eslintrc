@@ -1,4 +1,8 @@
-{
+{ 
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
   "env": {
     "node": true,
     "es6": true
@@ -26,7 +30,11 @@
     "globalReturn": true
   },
   "rules": {
+    "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
+    "arrow-parens": [2, "as-needed", { "requireForBlockBody": true }],
+    "indent": [2, 2, { "SwitchCase": 1 }],
     "comma-dangle": [ 2, "never" ],
+    "comma-spacing": [2, { "before": false, "after": true }],
     "no-console": 1,
     "no-constant-condition": 2,
     "no-control-regex": 2,
@@ -42,7 +50,15 @@
     "no-invalid-regexp": 2,
     "no-irregular-whitespace": 2,
     "no-negated-in-lhs": 2,
+    "no-trailing-spaces": 2,
+    "no-undef": 2,
+    "no-unneeded-ternary": 2,
     "no-unreachable": 2,
+    "no-underscore-dangle": 0,
+    "no-unused-expressions": 0,
+    "no-unused-vars":  ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
+    "no-use-before-define": [1, "nofunc"],
+    "no-var": 1,
     "use-isnan": 2,
     "valid-typeof": 2
   }
