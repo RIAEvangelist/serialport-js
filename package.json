@@ -2,7 +2,7 @@
   "name": "serialport-js",
   "version": "0.2.2",
   "description": "- *Node.js commandline/terminal interface.*",
-  "main": "serialport-js.js",
+  "main": "./lib/serialport-js.js",
   "scripts": {
     "lint": "gulp eslint",
     "test": "gulp mocha",
