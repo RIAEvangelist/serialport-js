@@ -19,7 +19,9 @@
     "Thomas Reynders"
   ],
   "license": "DBAD",
-  "dependencies": {},
+  "dependencies": {
+    "sinon-stub-promise": "^4.0.0"
+  },
   "devDependencies": {
     "eslint": "^3.19.0",
     "gulp": "^3.9.1",
