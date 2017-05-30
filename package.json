@@ -7,7 +7,8 @@
     "lint": "gulp eslint",
     "test": "gulp mocha",
     "test-cov": "nyc node_modules/mocha/bin/_mocha -- {lib,test}/**/*.spec.js",
-    "coverage": "nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "files": [
     "examples/",
@@ -23,6 +24,7 @@
     "sinon-stub-promise": "^4.0.0"
   },
   "devDependencies": {
+    "coveralls": "^2.13.1",
     "eslint": "^3.19.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
