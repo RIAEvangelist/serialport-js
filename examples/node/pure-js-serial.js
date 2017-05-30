@@ -17,3 +17,5 @@ const init = async () => {
         port.send('foo bar');
     }
 };
+
+init();
