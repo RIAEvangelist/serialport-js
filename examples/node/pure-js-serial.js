@@ -1,27 +1,19 @@
-var serialjs=require('../../serialport-js');
-serialjs.find(serialDevicesPopulated);
+// Require
+const serialjs = require('../../serialport-js');
 
-function serialDevicesPopulated(ports){
-    //ports arg is a refrence to serialjs.ports
-    console.log(
-        ports
-    );
-    
-    if(!ports[0])
-        return;
-    
-    serialjs.open(ports[0].port,start,'\n');
-}
+// Find serial ports
+const init = async () => {
+    const delimiter = '\n';
+    const ports = await serialjs.find();
+    if (ports.length) {
+        let port = serialjs.open(ports[0].port, delimiter);
 
-function start(port){
-    port.on(
-        'data',
-        gotData
-    );
-
-    port.send('howdy doody doo');
-}
-
-function gotData(data){
-    console.log(data);
-}
+        port.on('data', (data) => {
+            console.log(data);
+        });
+        port.on('error', (error) => {
+            console.error(error);
+        });
+        port.send('foo bar');
+    }
+};
