@@ -1,6 +1,6 @@
 {
   "name": "serialport-js",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "Serialport js - node.js serial duplex connection.",
   "main": "./lib/serialport-js.js",
   "scripts": {
