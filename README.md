@@ -1,5 +1,4 @@
 # serialport-js [![Build Status](https://travis-ci.org/ninox92/serialport-js.svg?branch=master)](https://travis-ci.org/ninox92/serialport-js)
-===============
 
 A pure javascript bi-directional serial port implementation for node.js, node-webkit and nw.js.
 
@@ -20,7 +19,7 @@ const init = async () => {
     const delimiter = '\n';
     const ports = await serialjs.find();
     if (ports.length) {
-        let port = serialjs.open(ports[0].port, delimiter);
+        let port = await serialjs.open(ports[0].port, delimiter);
 
         port.on('data', (data) => {
             console.log(data);
@@ -39,11 +38,14 @@ Methods
 
 ##### find()
 
-Type: `Array`
+Type: `Promise<Array|Error>`
+
 Async function that returns a promise.
 When resolved it contains a list of the registered serial devices.
 
 ##### open(path, delimiter = '\r\n')
+
+Type: `Promise<EventEmitter|Error>`
 
 Opens a Duplex connection to the serial device.
 Returns the Port(event.EventEmitter) Object
@@ -86,6 +88,7 @@ Port Variables
 #node-webkit, nw.js, and seperate node.js thread examples
 *The only difference with this is that the user must have node installed. It will spawn a node proxy using their local node version and run the pure js serialport implementation. This is great for consumer facing products as there is no need for compilers or dev tools to install the module with your app, users just need node.
 
+```js
     var serialjs=require('serialport-js').node(); //thats the only difference
     //the rest of the implementation is exactly the same.
 
@@ -116,3 +119,4 @@ Port Variables
     function gotData(data){
         console.log(data);
     }
+```
