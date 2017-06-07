@@ -1,4 +1,6 @@
-# serialport-js [![Build Status](https://travis-ci.org/ninox92/serialport-js.svg?branch=master)](https://travis-ci.org/ninox92/serialport-js)
+# serialport-js
+[![Build Status](https://travis-ci.org/ninox92/serialport-js.svg?branch=master)](https://travis-ci.org/ninox92/serialport-js)
+[![Coverage Status](https://coveralls.io/repos/github/ninox92/serialport-js/badge.svg?branch=master)](https://coveralls.io/github/ninox92/serialport-js?branch=master)
 
 A pure javascript bi-directional serial port implementation for node.js, node-webkit and nw.js.
 
