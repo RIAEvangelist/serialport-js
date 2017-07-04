@@ -7,6 +7,12 @@
         "cobertura",
         "lcov"
     ],
+    "include": [
+        "lib/**/*.js"
+    ],
+    "exclude": [
+        "test/**/*.spec.js"
+    ],
     "all": true,
     "check-coverage": true,
     "report-dir": "./coverage",
