@@ -1,113 +1,96 @@
-#serialport-js
--
-*a pure javascript serial port implementation for node.js, node-webkit and nw.js*  
+# serialport-js
+[![Build Status](https://travis-ci.org/ninox92/serialport-js.svg?branch=master)](https://travis-ci.org/ninox92/serialport-js)
+[![Coverage Status](https://coveralls.io/repos/github/ninox92/serialport-js/badge.svg?branch=master)](https://coveralls.io/github/ninox92/serialport-js?branch=master)
 
-#ALPHA
-####only tested on linux at this time
-
-
-#requirements
-none currently
-
-#Installing serialport-js
-` npm install serialport-js `
-
-#Module Methods
--
-
-|method | arguments            | result                           | description |
-|-------|----------------------|----------------------------------|-------------|
-|find   | callback             | array of ports passed to callback| returns array od ports and info  |
-|open   | port, delimiter      | returns reference to port        | open a serial port for bidirectional communication. The returned refrence will have the port info and a send function available on it. Data events will be dispatched on the returned port reference when the delimiter is received |
-
-#Port Events
--
-
-|method | arguments            | description                      |
-|-------|----------------------|----------------------------------|
-|data   | data                 | array of ports passed to callback|
-|error  | errType, data        | an error happened on the port    |
-|close  |                      | the port has been closed         |
-
-#Port Methods
--
-
-|method | arguments            | description                      |
-|-------|----------------------|----------------------------------|
-|send   | data                 | sends data to the port           |
-|close  | errType, message     | closes the port                  |
+A pure javascript bi-directional serial port implementation for node.js, node-webkit and nw.js.
 
 
-#Examples
--
+## Install
 
-### basic example 
+```bash
+npm i --save serialport-js
+```
 
-    var serialjs=require('serialport-js');
-    serialjs.open(
-        '/dev/ttyUSB0',
-        start,
-        '\n'
-    );
 
-    function start(port){
-        port.on(
-            'data',
-            gotData
-        );
+## Usage
 
-        port.send('howdy doody doo!')
+```js
+const serialjs = require('serialport-js');
+
+const init = async () => {
+    const delimiter = '\n';
+    const ports = await serialjs.find();
+    if (ports.length) {
+        let port = await serialjs.open(ports[0].port, delimiter);
+
+        port.on('data', (data) => {
+            console.log(data);
+        });
+        port.on('error', (error) => {
+            console.error(error);
+        });
+        port.send('foo bar');
     }
+};
+init();
+```
 
-    function gotData(data){
-        console.log(data);
-    }   
+Methods
+-------
+
+##### find()
+
+Type: `Promise<Array|Error>`
+
+Async function that returns a promise.
+When resolved it contains a list of the registered serial devices.
+
+##### open(path, delimiter = '\r\n')
+
+Type: `Promise<EventEmitter|Error>`
+
+Opens a Duplex connection to the serial device.
+Returns the Port(event.EventEmitter) Object
 
 
-### find any available serial ports
+Port Events
+-----------
+##### data
+
+Type: `String`
+
+The data that has been read out of the serial connection.
+
+##### error
+
+The error that occured.
+
+##### closed
+
+Is emitted when the connection is closed.
 
 
-    var serialjs=require('serialport-js');
+Port Methods
+------------
+##### port.send(data)
 
-    serialjs.find(
-        function(ports){
-            console.log('available usb serial : ',ports);
-        }
-    );
+Sends the data to the serial device.
 
-### find, then open serial port and communicate with it bi-directionally.
+##### port.close();
 
-    var serialjs=require('serialport-js');
-    serialjs.find(serialDevicesPopulated);
+Closes the connection to the serial device.
+When closed, the event `closed` is emitted.
 
-    function serialDevicesPopulated(ports){
-        //ports arg is a refrence to serialjs.ports
-        console.log(
-            ports
-        );
+Port Variables
+------------
+- isOpen
+- serialPort
 
-        if(!ports[0])
-            return;
-
-        serialjs.open(ports[0].port,start,'\n');
-    }
-
-    function start(port){
-        port.on(
-            'data',
-            gotData
-        );
-
-        port.send('howdy doody doo');
-    }
-
-    function gotData(data){
-        console.log(data);
-    }
 
 #node-webkit, nw.js, and seperate node.js thread examples
 *The only difference with this is that the user must have node installed. It will spawn a node proxy using their local node version and run the pure js serialport implementation. This is great for consumer facing products as there is no need for compilers or dev tools to install the module with your app, users just need node.
 
+```js
     var serialjs=require('serialport-js').node(); //thats the only difference
     //the rest of the implementation is exactly the same.
 
@@ -138,3 +121,4 @@ none currently
     function gotData(data){
         console.log(data);
     }
+```
