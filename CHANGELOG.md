@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.0 (2017-07-20)
+
+**New Feature:**
+
+- findById function to find a serialport by-id.
+
 ## v1.0.1 (2017-06-04)
 
 **Fixed bugs:**

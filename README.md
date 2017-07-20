@@ -40,10 +40,20 @@ Methods
 
 ##### find()
 
-Type: `Promise<Array|Error>`
+Type: `Promise<Object[]|Error>`
 
 Async function that returns a promise.
 When resolved it contains a list of the registered serial devices.
+
+
+##### findById(id)
+Id: `String`
+Type: `Promise<Object|Error>`
+
+Async function that returns a promise.
+When resolved it contains the found serial device or `null` when
+not found.
+
 
 ##### open(path, delimiter = '\r\n')
 
